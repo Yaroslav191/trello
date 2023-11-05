@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
-import Image from 'next/image';
-import React from 'react';
-import Avatar from 'react-avatar';
+import { MagnifyingGlassIcon, UserCircleIcon } from "@heroicons/react/20/solid";
+import Image from "next/image";
+import React from "react";
+import Avatar from "react-avatar";
 
 const Header = () => {
   return (
@@ -21,23 +21,39 @@ const Header = () => {
           className="w-44 md:w-56 pb-10 md:pb-0 object-contain"
         />
 
-        <div className="flex items-center space-x-5">
-          {/* Search Box */}
+            <div className="flex items-center space-x-5">
+               {/* Search Box */}
 
-          <form className="flex items-center space-x-5 bg-white rounded-md p-2 shadow-md flex-1 md:flex-initial">
-            <MagnifyingGlassIcon className="h-6 w-6 text-gray-400 " />
-            <input type="text" placeholder="Search" className="flex-1 outline-none p-2" />
-            <button hidden>Search</button>
-            <button type="submit" hidden>
-              Search
-            </button>
-          </form>
-          {/* Avatar */}
-          <Avatar name="Yaroslav Trofimov" round color="#0055D1" size="50" />
-        </div>
-      </div>
-    </header>
-  );
+               <form className="flex items-center space-x-5 bg-white rounded-md p-2 shadow-md flex-1 md:flex-initial">
+                  <MagnifyingGlassIcon className="h-6 w-6 text-gray-400 " />
+                  <input
+                     type="text"
+                     placeholder="Search"
+                     className="flex-1 outline-none p-2"
+                  />
+                  <button hidden>Search</button>
+                  <button type="submit" hidden>
+                     Search
+                  </button>
+               </form>
+               {/* Avatar */}
+               <Avatar
+                  name="Yaroslav Trofimov"
+                  round
+                  color="#0055D1"
+                  size="50"
+               />
+            </div>
+         </div>
+
+         <div className="flex items-center justify-center px-5 md:py-5">
+            <p className="flex items-center text-sm font-light p-5 pr-5 shadow-xl rounded-xl w-fit bg-white italic max-w-3xl text-[#0055D1]">
+               <UserCircleIcon className="inline-block h-10 w-10 text-[#0055D1] mr-1" />
+               GPT is summarising your tasks for the day...
+            </p>
+         </div>
+      </header>
+   );
 };
 
 export default Header;
