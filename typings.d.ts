@@ -9,7 +9,7 @@ interface Column {
   todos: Todo[];
 }
 
-interface Todo {
+interface Todo extends Models.Document {
   $id: string;
   $createdAt: string;
   title: string;
