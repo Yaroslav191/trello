@@ -1,9 +1,18 @@
 import React from "react";
-import { Draggable } from "react-beautiful-dnd";
+import { Draggable, Droppable } from "@hello-pangea/dnd";
 
 type Props = {
+   id: string;
    todos: Todo[];
    index: number;
+};
+
+const idToColumnText: {
+   [key in TypedColumn]: string;
+} = {
+   todo: "To Do",
+   inprogress: "In Progress",
+   done: "Done",
 };
 
 function Column({ id, todos, index }: Props) {
@@ -15,19 +24,21 @@ function Column({ id, todos, index }: Props) {
                {...provided.dragHandleProps}
                ref={provided.innerRef}
             >
-               <Draggable draggableId={index.toString()} type="card">
+               <Droppable droppableId={index.toString()} type="card">
                   {(provided, snapshot) => (
                      <div
-                        {...provided.draggableProps}
+                        {...provided.droppableProps}
                         ref={provided.innerRef}
                         className={`p-2 rounded-2xl shadow-sm ${
-                           snapshot.draggingOver
+                           snapshot.isDraggingOver
                               ? "bg-green-200"
                               : "bg-white/50"
                         }`}
-                     ></div>
+                     >
+                        <h2>{idToColumnText[id]}</h2>
+                     </div>
                   )}
-               </Draggable>
+               </Droppable>
             </div>
          )}
       </Draggable>
