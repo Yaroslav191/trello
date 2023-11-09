@@ -7,34 +7,16 @@ import Column from './Column';
 import { databases } from '@/appwrite';
 
 const Board = () => {
-  const [board, getBoard, setBoardState] = useBoardStore((state) => [
+  const [board, getBoard, setBoardState, updateTodoInDB] = useBoardStore((state) => [
     state.board,
     state.getBoard,
     state.setBoardState,
+    state.updateTodoInDB,
   ]);
 
   useEffect(() => {
     getBoard();
   }, []);
-
-  const updateCard = (id: string, status: string) => {
-    const statuses = ['todo', 'inprogress', 'done'];
-
-    const promise = databases.updateDocument(
-      process.env.NEXT_PUBLIC_DATABASE_ID!,
-      process.env.NEXT_PUBLIC_TODOS_COLLECTION_ID!,
-      id,
-      { status: statuses[status] },
-    );
-    promise.then(
-      function (response) {
-        console.log(response); // Success
-      },
-      function (error) {
-        console.log(error); // Failure
-      },
-    );
-  };
 
   const handleOnDragEnd = (result: DropResult) => {
     const { destination, source, type } = result;
@@ -100,11 +82,11 @@ const Board = () => {
         todos: finishTodos,
       });
 
+      console.log(todoMoved, finishCol.id);
+
+      updateTodoInDB(todoMoved, finishCol.id);
+
       setBoardState({ ...board, columns: newColumns });
-
-      console.log(result);
-
-      updateCard(result.draggableId, result.destination.droppableId);
     }
   };
 
