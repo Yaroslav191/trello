@@ -1,25 +1,32 @@
 "use client";
 
+import { useBoardStore } from "@/store/BoardStore";
 import { MagnifyingGlassIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "react-avatar";
 
 const Header = () => {
-  return (
-    <header>
-      <div className="flex flex-col md:flex-row items-center p-5 bg-gray-500/10 rouded-b-2xl md:justify-between">
-        <div
-          className="absolute top-0 left-0 w-full h-96 bg-gradient-to-br from-pink-400 to-[#0055D1] rounded-md filter blur-3xl 
+   const [setSearchString] = useBoardStore((state) => [state.setSearchString]);
+
+   const handleSearch = (e: any) => {
+      setSearchString(e.target.value);
+   };
+
+   return (
+      <header>
+         <div className="flex flex-col md:flex-row items-center p-5 bg-gray-500/10 rouded-b-2xl md:justify-between">
+            <div
+               className="absolute top-0 left-0 w-full h-96 bg-gradient-to-br from-pink-400 to-[#0055D1] rounded-md filter blur-3xl 
         opacity-50 -z-50"
-        />
-        <Image
-          src="https://links.papareact.com/c2cdd5"
-          alt="Trello Logo"
-          width={300}
-          height={100}
-          className="w-44 md:w-56 pb-10 md:pb-0 object-contain"
-        />
+            />
+            <Image
+               src="https://links.papareact.com/c2cdd5"
+               alt="Trello Logo"
+               width={300}
+               height={100}
+               className="w-44 md:w-56 pb-10 md:pb-0 object-contain"
+            />
 
             <div className="flex items-center space-x-5">
                {/* Search Box */}
@@ -30,6 +37,7 @@ const Header = () => {
                      type="text"
                      placeholder="Search"
                      className="flex-1 outline-none p-2"
+                     onChange={handleSearch}
                   />
                   <button hidden>Search</button>
                   <button type="submit" hidden>
