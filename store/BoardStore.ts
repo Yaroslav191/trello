@@ -30,5 +30,5 @@ export const useBoardStore = create<BoardState>((set) => ({
     );
   },
   searchString: '',
-  setSearchString: (searchString) => set({searchString})
+  setSearchString: (searchString) => set({ searchString }),
 }));
