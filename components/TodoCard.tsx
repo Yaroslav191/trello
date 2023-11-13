@@ -5,6 +5,7 @@ import {
    DraggableProvidedDraggableProps,
 } from "@hello-pangea/dnd";
 import { XCircleIcon } from "@heroicons/react/20/solid";
+import Image from "next/image";
 import React from "react";
 
 type Props = {
@@ -24,6 +25,8 @@ function TodoCard({
    draggableProps,
    dragHandleProps,
 }: Props) {
+   console.log(todo);
+
    return (
       <div
          className="bg-white rounded-md space-y-2 drop-shadow-md"
@@ -33,10 +36,19 @@ function TodoCard({
       >
          <div className="flex justify-between items-center p-5">
             <p>{todo.title}</p>
+
             <button className="text-red-500 hover:text-red-600">
                <XCircleIcon className="ml-5 h-8 w-8" />
             </button>
          </div>
+         {todo.image && (
+            <Image
+               src={todo.image}
+               width={500}
+               height={400}
+               alt="Picture of the author"
+            />
+         )}
       </div>
    );
 }
