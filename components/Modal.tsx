@@ -4,7 +4,8 @@ import { useState, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useModalStore } from '@/store/ModalStore';
 import { CheckBadgeIcon, PhotoIcon } from '@heroicons/react/20/solid';
-import { storage } from '@/appwrite';
+import { databases, storage } from '@/appwrite';
+import { v4 as uuidv4 } from 'uuid';
 
 function Modal() {
   const [isOpen, closeModal] = useModalStore((state) => [state.isOpen, state.closeModal]);
@@ -13,21 +14,30 @@ function Modal() {
 
   const [isOptionActive, setSIsOptionActive] = useState(false);
   const [optionState, setOptionState] = useState(0);
-  const [file, setFile] = useState('');
+  const [file, setFile] = useState(null);
+  const [title, setTitle] = useState('');
+
+  const id = uuidv4();
+
+  const statuses = ['todo', 'inprogress', 'done'];
 
   const onSubmit = (e: any) => {
     e.preventDefault();
 
-    const promise = storage.createFile(process.env.NEXT_PUBLIC_BUCKET_ID!, '4', file);
+    const saveForm = async () => {
+      const fileResponse = await storage.createFile(process.env.NEXT_PUBLIC_BUCKET_ID!, id, file);
 
-    promise.then(
-      function (response) {
-        console.log(response); // Success
-      },
-      function (error) {
-        console.log(error); // Failure
-      },
-    );
+      const documentResponse = await databases.createDocument(
+        process.env.NEXT_PUBLIC_DATABASE_ID!,
+        '6547bad096ffa6018276',
+        uuidv4(),
+        { title: title, status: statuses[optionState], image: id },
+      );
+
+      console.log(fileResponse, documentResponse);
+    };
+
+    saveForm();
   };
 
   const selectOption = (option: number) => {
@@ -69,6 +79,7 @@ function Modal() {
                     type="text"
                     placeholder="Enter a task here..."
                     className="w-full p-2 outline-none border rounded-lg"
+                    onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
 
