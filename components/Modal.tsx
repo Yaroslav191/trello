@@ -1,61 +1,77 @@
 "use client";
 
-import { useState, Fragment } from "react";
+import { useState, Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useModalStore } from "@/store/ModalStore";
 import { CheckBadgeIcon, PhotoIcon } from "@heroicons/react/20/solid";
 import { databases, storage } from "@/appwrite";
 import { v4 as uuidv4 } from "uuid";
 import TaskTypeRadioGroup from "./TaskTypeRadioGroup";
+import { useBoardStore } from "@/store/BoardStore";
+import Image from "next/image";
 
 function Modal() {
+   const imagePickerRef = useRef<HTMLInputElement>(null);
+
    const [isOpen, closeModal] = useModalStore((state) => [
       state.isOpen,
       state.closeModal,
    ]);
 
-   const active = "bg-yellow-400 text-white";
-
-   const [isOptionActive, setSIsOptionActive] = useState(false);
-   const [optionState, setOptionState] = useState(0);
-   const [file, setFile] = useState(null);
-   const [title, setTitle] = useState("");
+   const [
+      newTaskInput,
+      setNewTaskInput,
+      setImage,
+      image,
+      addTask,
+      newTaskType,
+   ] = useBoardStore((state) => [
+      state.newTaskType,
+      state.setNewTaskType,
+      state.setImage,
+      state.image,
+      state.addTask,
+      state.newTaskType,
+   ]);
 
    const id = uuidv4();
 
-   const statuses = ["todo", "inprogress", "done"];
-
-   const onSubmit = (e: any) => {
+   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      const saveForm = async () => {
-         const fileResponse = await storage.createFile(
-            process.env.NEXT_PUBLIC_BUCKET_ID!,
-            id,
-            file
-         );
+      if (!newTaskInput) return;
 
-         const documentResponse = await databases.createDocument(
-            process.env.NEXT_PUBLIC_DATABASE_ID!,
-            "6547bad096ffa6018276",
-            uuidv4(),
-            { title: title, status: statuses[optionState], image: id }
-         );
+      addTask(newTaskInput, newTaskType, image);
 
-         console.log(fileResponse, documentResponse);
-      };
+      // const saveForm = async () => {
+      //    const fileResponse = await storage.createFile(
+      //       process.env.NEXT_PUBLIC_BUCKET_ID!,
+      //       id,
+      //       file
+      //    );
 
-      saveForm();
-   };
+      //    const documentResponse = await databases.createDocument(
+      //       process.env.NEXT_PUBLIC_DATABASE_ID!,
+      //       "6547bad096ffa6018276",
+      //       uuidv4(),
+      //       { title: title, status: statuses[optionState], image: id }
+      //    );
 
-   const selectOption = (option: number) => {
-      setOptionState(option);
+      //    console.log(fileResponse, documentResponse);
+      // };
+
+      // saveForm();
    };
 
    return (
       // Use the `Transition` component at the root level
       <Transition appear show={isOpen} as={Fragment}>
-         <Dialog as="form" onClose={closeModal} className="relative z-10">
+         <Dialog
+            as="form"
+            onClose={closeModal}
+            onSubmit={handleSubmit}
+            className="relative z-10"
+         >
             <Transition.Child
                as={Fragment}
                enter="ease-out duration-300"
@@ -92,70 +108,59 @@ function Modal() {
                               type="text"
                               placeholder="Enter a task here..."
                               className="w-full p-2 outline-none border rounded-lg"
-                              onChange={(e) => setTitle(e.target.value)}
+                              value={newTaskInput}
+                              onChange={(e) => setNewTaskInput(e.target.value)}
                            />
                         </div>
                         <TaskTypeRadioGroup />
 
-                        {/* <div
-                  className={`flex justify-between items-center cursor-pointer mb-3 shadow-md p-3 rounded-lg ${
-                    optionState === 1 ? active : ''
-                  }`}
-                  onClick={() => selectOption(1)}>
-                  <div>
-                    <div className="">Todo</div>
-                    <div>A new task to be completed</div>
-                  </div>
-                  <div>
-                    <CheckBadgeIcon className="w-7 h-7" />
-                  </div>
-                </div>
-
-                <div
-                  className={`flex justify-between items-center cursor-pointer mb-3 shadow-md p-3 rounded-lg ${
-                    optionState === 2 ? active : ''
-                  }`}
-                  onClick={() => selectOption(2)}>
-                  <div>
-                    <div className="">In Progress</div>
-                    <div>A task that is currently being worked on</div>
-                  </div>
-                  <div>
-                    <CheckBadgeIcon className="w-7 h-7" />
-                  </div>
-                </div>
-
-                <div
-                  className={`flex justify-between items-center cursor-pointer mb-3 shadow-md p-3 rounded-lg ${
-                    optionState === 3 ? active : ''
-                  }`}
-                  onClick={() => selectOption(3)}>
-                  <div>
-                    <div className="">Done</div>
-                    <div>A task that has been completed</div>
-                  </div>
-                  <div>
-                    <CheckBadgeIcon className="w-7 h-7" />
-                  </div>
-                </div>
-
-                <div className="mt-5 mb-3">
-                  <label
-                    htmlFor="upload"
-                    className="w-full p-5 flex justify-center items-center border rounded-lg cursor-pointer">
-                    <PhotoIcon className="w-5 h-5 mr-2" />
-                    Upload Image
-                  </label>
-                  <input
-                    type="file"
-                    id="upload"
-                    className="hidden"
-                    onChange={(e) => setFile(e.target.files[0])}
-                  />
-                </div>
-                <button className="p-2 bg-gray-200 rounded-lg" type="submit" onClick={onSubmit}>
-                  Add Task
-                </button> */}
+                        <div>
+                           <button
+                              onClick={(e) => {
+                                 e.preventDefault();
+                                 imagePickerRef.current?.click();
+                              }}
+                              className="w-full border borded-gray-300 rounded-md outline-none p-5 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                           >
+                              <PhotoIcon className="h-6 w-6 mr-2 inline-block" />
+                              Upload Image
+                           </button>
+                           {image && (
+                              <Image
+                                 src={URL.createObjectURL(image)}
+                                 width={200}
+                                 height={200}
+                                 alt="Upload image"
+                                 className="w-full h-44 object-cover mt-2 filter hover:grayscale transition-all duration-150 cursor-not-allowed"
+                                 onClick={() => setImage(null)}
+                              />
+                           )}
+                           <input
+                              type="file"
+                              ref={imagePickerRef}
+                              hidden
+                              onChange={(e) => {
+                                 if (
+                                    !e.target.files![0].type.startsWith(
+                                       "image/"
+                                    )
+                                 )
+                                    return;
+                                 setImage(e.target.files![0]);
+                              }}
+                           />
+                        </div>
+                        <div className="mt-4">
+                           <button
+                              type="submit"
+                              disabled={!newTaskInput}
+                              className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4
+                           py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
+                           focus-visible:ring-offset-2 disabled:bg-gray-100 disabled:text-gray-300 disabled:cursor-not-allowed"
+                           >
+                              Add Task
+                           </button>
+                        </div>
                      </Dialog.Panel>
                   </Transition.Child>
                </div>
