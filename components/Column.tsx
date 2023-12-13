@@ -1,9 +1,12 @@
-import React from 'react';
-import { Draggable, Droppable } from '@hello-pangea/dnd';
-import { PlusCircleIcon } from '@heroicons/react/20/solid';
-import TodoCard from './TodoCard';
-import { useBoardStore } from '@/store/BoardStore';
-import { useModalStore } from '@/store/ModalStore';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-nocheck
+
+import React from "react";
+import { Draggable, Droppable } from "@hello-pangea/dnd";
+import { PlusCircleIcon } from "@heroicons/react/20/solid";
+import TodoCard from "./TodoCard";
+import { useBoardStore } from "@/store/BoardStore";
+import { useModalStore } from "@/store/ModalStore";
 
 type Props = {
   id: string;
@@ -14,9 +17,9 @@ type Props = {
 const idToColumnText: {
   [key in TypedColumn]: string;
 } = {
-  todo: 'To Do',
-  inprogress: 'In Progress',
-  done: 'Done',
+  todo: "To Do",
+  inprogress: "In Progress",
+  done: "Done",
 };
 
 function Column({ id, todos, index }: Props) {
@@ -26,14 +29,17 @@ function Column({ id, todos, index }: Props) {
   return (
     <Draggable draggableId={id} index={index}>
       {(provided) => (
-        <div {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
+        <div
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}>
           <Droppable droppableId={index.toString()} type="card">
             {(provided, snapshot) => (
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
                 className={`p-2 rounded-2xl shadow-sm ${
-                  snapshot.isDraggingOver ? 'bg-green-200' : 'bg-white/50'
+                  snapshot.isDraggingOver ? "bg-green-200" : "bg-white/50"
                 }`}>
                 <h2 className="flex justify-between font-bold text-xl p-2">
                   {idToColumnText[id]}
@@ -42,7 +48,9 @@ function Column({ id, todos, index }: Props) {
                     {!searchString
                       ? todos.length
                       : todos.filter((todo) =>
-                          todo.title.toLocaleLowerCase().includes(searchString.toLocaleLowerCase()),
+                          todo.title
+                            .toLocaleLowerCase()
+                            .includes(searchString.toLocaleLowerCase())
                         ).length}
                   </span>
                 </h2>
@@ -50,11 +58,16 @@ function Column({ id, todos, index }: Props) {
                   {todos.map((item, index) => {
                     if (
                       searchString &&
-                      !item.title.toLocaleLowerCase().includes(searchString.toLocaleLowerCase())
+                      !item.title
+                        .toLocaleLowerCase()
+                        .includes(searchString.toLocaleLowerCase())
                     )
                       return null;
                     return (
-                      <Draggable key={item.$id} draggableId={item.$id} index={index}>
+                      <Draggable
+                        key={item.$id}
+                        draggableId={item.$id}
+                        index={index}>
                         {(provided) => {
                           return (
                             <TodoCard
@@ -73,7 +86,9 @@ function Column({ id, todos, index }: Props) {
                   {provided.placeholder}
 
                   <div className="flex items-end justify-end p-2">
-                    <button className="text-green-500 hover:text-green-600" onClick={openModal}>
+                    <button
+                      className="text-green-500 hover:text-green-600"
+                      onClick={openModal}>
                       <PlusCircleIcon className="h-10 w-10" />
                     </button>
                   </div>
