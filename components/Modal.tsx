@@ -1,15 +1,19 @@
 "use client";
 
 import { useState, Fragment } from "react";
-
+import { Dialog, Transition } from "@headlessui/react";
 import { useModalStore } from "@/store/ModalStore";
 import { CheckBadgeIcon, PhotoIcon } from "@heroicons/react/20/solid";
 import { databases, storage } from "@/appwrite";
 import { v4 as uuidv4 } from "uuid";
 import TaskTypeRadioGroup from "./TaskTypeRadioGroup";
 import { Dialog, Transition } from "@headlessui/react";
+import { useBoardStore } from "@/store/BoardStore";
+import Image from "next/image";
 
 function Modal() {
+  const imagePickerRef = useRef<HTMLInputElement>(null);
+
   const [isOpen, closeModal] = useModalStore((state) => [
     state.isOpen,
     state.closeModal,
@@ -28,22 +32,26 @@ function Modal() {
   const onSubmit = (e: any) => {
     e.preventDefault();
 
-    const saveForm = async () => {
-      const fileResponse = await storage.createFile(
-        process.env.NEXT_PUBLIC_BUCKET_ID!,
-        id,
-        file as any
-      );
+    if (!newTaskInput) return;
 
-      const documentResponse = await databases.createDocument(
-        process.env.NEXT_PUBLIC_DATABASE_ID!,
-        "6547bad096ffa6018276",
-        uuidv4(),
-        { title: title, status: statuses[optionState], image: id }
-      );
+    addTask(newTaskInput, newTaskType, image);
 
-      console.log(fileResponse, documentResponse);
-    };
+    // const saveForm = async () => {
+    //    const fileResponse = await storage.createFile(
+    //       process.env.NEXT_PUBLIC_BUCKET_ID!,
+    //       id,
+    //       file as any
+    //    );
+
+    //    const documentResponse = await databases.createDocument(
+    //       process.env.NEXT_PUBLIC_DATABASE_ID!,
+    //       "6547bad096ffa6018276",
+    //       uuidv4(),
+    //       { title: title, status: statuses[optionState], image: id }
+    //    );
+
+    //    console.log(fileResponse, documentResponse);
+    // };
 
     saveForm();
   };
@@ -55,7 +63,11 @@ function Modal() {
   return (
     // Use the `Transition` component at the root level
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="form" onClose={closeModal} className="relative z-10">
+      <Dialog
+        as="form"
+        onClose={closeModal}
+        onSubmit={handleSubmit}
+        className="relative z-10">
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
