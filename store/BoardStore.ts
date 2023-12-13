@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-nocheck
-
 import { ID, databases, storage } from "@/appwrite";
 import uploadImage from "@/lib/fileUpload";
 import { getTodosGroupedByColumn } from "@/lib/getTodosGroupedByColumn";
