@@ -1,16 +1,19 @@
-'use client';
+"use client";
 
-import fetchSuggestion from '@/lib/fetchSuggestion';
-import { useBoardStore } from '@/store/BoardStore';
-import { MagnifyingGlassIcon, UserCircleIcon } from '@heroicons/react/20/solid';
-import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
-import Avatar from 'react-avatar';
+// import fetchSuggestion from "@/lib/fetchSuggestion";
+import { useBoardStore } from "@/store/BoardStore";
+import { MagnifyingGlassIcon, UserCircleIcon } from "@heroicons/react/20/solid";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import Avatar from "react-avatar";
 
 const Header = () => {
-  const [setSearchString, board] = useBoardStore((state) => [state.setSearchString, state.board]);
+  const [setSearchString, board] = useBoardStore((state) => [
+    state.setSearchString,
+    state.board,
+  ]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [suggestion, setSuggestion] = useState<string>('');
+  // const [suggestion, setSuggestion] = useState<string>("");
 
   const handleSearch = (e: any) => {
     setSearchString(e.target.value);
@@ -20,13 +23,13 @@ const Header = () => {
     if (board.columns.size === 0) return;
     setLoading(true);
 
-    const fetchSuggestinFunc = async () => {
-      const suggestion = await fetchSuggestion(board);
-      setSuggestion(suggestion);
-      setLoading(false);
-    };
+    // const fetchSuggestinFunc = async () => {
+    //   const suggestion = await fetchSuggestion(board);
+    //   setSuggestion(suggestion);
+    //   setLoading(false);
+    // };
 
-    fetchSuggestinFunc();
+    // fetchSuggestinFunc();
   }, [board]);
 
   return (
@@ -64,16 +67,20 @@ const Header = () => {
           <Avatar name="Yaroslav Trofimov" round color="#0055D1" size="50" />
         </div>
       </div>
-
+      {/* 
       <div className="flex items-center justify-center px-5 md:py-5">
         <p className="flex items-center text-sm font-light p-5 pr-5 shadow-xl rounded-xl w-fit bg-white italic max-w-3xl text-[#0055D1]">
           <UserCircleIcon
-            className={`inline-block h-10 w-10 text-[#0055D1] mr-1 ${loading && 'animate-spin'}`}
+            className={`inline-block h-10 w-10 text-[#0055D1] mr-1 ${
+              loading && "animate-spin"
+            }`}
           />
-          {suggestion && !loading ? suggestion : 'GPT is summarising your tasks for the day...'}
+          {suggestion && !loading
+            ? suggestion
+            : "GPT is summarising your tasks for the day..."}
           GPT is summarising your tasks for the day...
         </p>
-      </div>
+      </div> */}
     </header>
   );
 };
